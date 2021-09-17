@@ -1,7 +1,5 @@
 name: pyinstaller
 on:
-  pull_request:
-    branches: [main, develop]
   push:
     tags:
       - "v*"
@@ -26,12 +24,15 @@ jobs:
 
       - name: build
         run: pyinstaller -F binary.py
-  
+        
+      - name: rename
+        run: mv dist/binary.exe dist/fmojinja.exe
+
       - name: upload
         uses: actions/upload-artifact@v1
         with:
           name: binary-windows
-          path: dist/binary.exe
+          path: dist/fmojinja.exe
 
   macOS-build:
     runs-on: macOS-latest
@@ -52,11 +53,14 @@ jobs:
       - name: build
         run: pyinstaller -F binary.py
 
+      - name: rename
+        run: mv dist/binary dist/fmojinja
+
       - name: upload
         uses: actions/upload-artifact@v1
         with:
           name: binary-macos
-          path: dist/binary
+          path: dist/fmojinja
 
   ubuntu-build:
     runs-on: ubuntu-latest
@@ -77,22 +81,25 @@ jobs:
         
       - name: build
         run: pyinstaller -F binary.py
+        
+      - name: rename
+        run: mv dist/binary dist/fmojinja
 
       - name: upload
         uses: actions/upload-artifact@v1
         with:
-          name: binary-linux
-          path: dist/binary
+          name: binary-ubuntu
+          path: dist/fmojinja
 
   release:
     needs: [ubuntu-build, macOS-build, windows-build]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download Linux
+      - name: Download Ubuntu
         uses: actions/download-artifact@v1
         with:
-          name: binary-linux
+          name: binary-ubuntu
 
       - name: Download Mac
         uses: actions/download-artifact@v1
@@ -117,9 +124,9 @@ jobs:
 
       - name: Zip
         run: |
-          tar -C binary-macos -pczvf binary-macos.tar.gz binary
-          tar -C binary-linux -pczvf binary-linux.tar.gz binary
-          zip --junk-paths binary-windows ./binary-windows/binary.exe
+          tar -C binary-macos -pczvf binary-macos.tar.gz fmojinja
+          tar -C binary-ubuntu -pczvf binary-ubuntu.tar.gz fmojinja
+          zip --junk-paths binary-windows ./binary-windows/fmojinja.exe
       - name: Append Binary
         uses: actions/upload-release-asset@v1
         env:
@@ -136,8 +143,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./binary-linux.tar.gz
-          asset_name: binary-linux.tar.gz
+          asset_path: ./binary-ubuntu.tar.gz
+          asset_name: binary-ubuntu.tar.gz
           asset_content_type: application/gzip
 
       - name: Append Binary
