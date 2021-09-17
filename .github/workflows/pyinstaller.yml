@@ -28,7 +28,7 @@ jobs:
       - name: upload
         uses: actions/upload-artifact@v1
         with:
-          name: fmojinja-windows
+          name: fmojinja-windows.exe
           path: dist/binary.exe
 
   macOS-build:
@@ -100,7 +100,7 @@ jobs:
       - name: Download Windows
         uses: actions/download-artifact@v1
         with:
-          name: fmojinja-windows
+          name: fmojinja-windows.exe
 
       - name: Create Release
         id: create_release
@@ -112,12 +112,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-
-      - name: Zip
-        run: |
-          tar -C fmojinja-macos -pczvf fmojinja-macos.tar.gz fmojinja
-          tar -C fmojinja-ubuntu -pczvf fmojinja-ubuntu.tar.gz fmojinja
-          zip --junk-paths fmojinja-windows ./fmojinja-windows/fmojinja.exe
           
       - name: Append Binary
         uses: actions/upload-release-asset@v1
@@ -125,9 +119,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./fmojinja-macos.tar.gz
-          asset_name: fmojinja-macos.tar.gz
-          asset_content_type: application/gzip
+          asset_path: ./fmojinja-macos
+          asset_name: fmojinja-macos
+          asset_content_type: application/octet-stream
 
       - name: Append Binary
         uses: actions/upload-release-asset@v1
@@ -135,9 +129,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./fmojinja-linux.tar.gz
-          asset_name: fmojinja-linux.tar.gz
-          asset_content_type: application/gzip
+          asset_path: ./fmojinja-linux
+          asset_name: fmojinja-linux
+          asset_content_type: application/octet-stream
 
       - name: Append Binary
         uses: actions/upload-release-asset@v1
@@ -145,6 +139,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./fmojinja-windows.zip
-          asset_name: fmojinja-windows.zip
-          asset_content_type: application/zip
+          asset_path: ./fmojinja-windows.exe
+          asset_name: fmojinja-windows.exe
+          asset_content_type: application/octet-stream
