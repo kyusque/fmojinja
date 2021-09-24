@@ -14,12 +14,12 @@ trajin {{ trajin }}
 {% for i in range(nframes // offset) %}
 {%- set start = i * offset + 1 %}
 {%- set end = (i + 1) * offset %}
-trajout {{ prefix }}.{{ (end * time_per_frame) | int | digit2letter }}.{{ (end * time_per_frame) | int }}.crd onlyframes {{ start }}-{{ end }}
+trajout {{ prefix }}.{{ (end * time_per_frame) | int | digit2letter }}.{{ (end * time_per_frame) | int }}.{{ output_format }} onlyframes {{ start }}-{{ end }}
 {%- endfor %}
 {% if nframes % offset != 0 %}
 {%- set start = (nframes // offset) * offset  + 1 %}
 {%- set end = nframes -%}
-trajout {{ prefix }}.{{ (end * time_per_frame) | int | digit2letter }}.{{ (end * time_per_frame) | int }}.crd onlyframes {{ start }}-{{ end }}
+trajout {{ prefix }}.{{ (end * time_per_frame) | int | digit2letter }}.{{ (end * time_per_frame) | int }}.{{ output_format }} onlyframes {{ start }}-{{ end }}
 {%- endif %}
 run
 
@@ -38,6 +38,7 @@ run
         p.add_argument("-p", "--prmtop", required=True)
         p.add_argument("-y", "--trajin", required=True)
         p.add_argument("--offset", default=10, type=int)
-        p.add_argument("-nf", "--nframes", type=int, required=True, help="by $cpptraj -p prmtop -y traj -tl")
+        p.add_argument("-nf", "--nframes", type=int, required=True, help="by $ cpptraj -p prmtop -y traj -tl")
         p.add_argument("-tpf", "--time-per-frame", default=1.0, type=float)
+        p.add_argument("-fo", "--output-format", default="crd")
         return super(Split, cls).set_arguments(p)
