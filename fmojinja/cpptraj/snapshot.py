@@ -14,7 +14,7 @@ trajin {{ path }} lastframe
 autoimage anchor {{ anchor }} origin
 align {{ align_mask }} {{ "ref {}".format(ref) if ref else "first" }}
 {% for path in trajin %}
-trajout {{ prefix ~ path.stem }}.rst onlyframes {{ loop.index }}
+trajout {{ prefix ~ path.stem }}.{{ output_format }} onlyframes {{ loop.index }}
 {% endfor %}
 run
 """
@@ -22,4 +22,5 @@ run
     @classmethod
     def set_arguments(cls, p):
         p.add_argument("-P", "--prefix", default="snapshots/")
+        p.add_argument("-fo", "--output-format", default="rst")
         return super(cls, cls).set_arguments(p)
